@@ -32,10 +32,10 @@ class ApplicationController < ActionController::Base
     end
 
     def remove_points(rewardable)
-      point = current_user.points.where(rewardable_id: rewardable.id, 
+      if point = current_user.points.where(rewardable_id: rewardable.id, 
                                         rewardable_type: rewardable.class.name).first
-
-      point.destroy
+        point.destroy
+      end
 
     end
 

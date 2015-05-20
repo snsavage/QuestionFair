@@ -3,9 +3,17 @@ require 'rails_helper'
 RSpec.describe QuestionsController do
 
   describe 'GET #index' do
+
+    before :each do
+      @request.env["devise.mapping"] = Devise.mappings[:user]
+      @user = FactoryGirl.create(:user)
+      @user.confirm!
+      sign_in @user
+    end
+
     it "returns an array of all questions" do
-      first_question = Question.create(question: "The first question?", category: "Other") # fix this
-      second_question = Question.create(question: "The second question?", category: "Other") # fix this
+      first_question = Question.create(question: "The first question?", category: "Other", user_id: @user.id) # fix this
+      second_question = Question.create(question: "The second question?", category: "Other", user_id: @user.id) # fix this
       get :index
       expect(assigns(:questions)).to match_array([first_question, second_question])    
     end
@@ -17,20 +25,36 @@ RSpec.describe QuestionsController do
   end
 
   describe 'GET #show' do
+
+    before :each do
+      @request.env["devise.mapping"] = Devise.mappings[:user]
+      @user = FactoryGirl.create(:user)
+      @user.confirm!
+      sign_in @user
+    end
+
     it "assigns the requested question to @question" do
-      question  = create(:question)
+      question  = create(:question, user_id: @user.id)
       get :show, id: question
       expect(assigns(:question)).to eq question
     end
 
     it "renders the show template" do
-      question = create(:question)
+      question = create(:question, user_id: @user.id)
       get :show, id: question
       expect(response).to render_template :show
     end
   end
 
   describe 'GET #new' do
+
+    before :each do
+      @request.env["devise.mapping"] = Devise.mappings[:user]
+      @user = FactoryGirl.create(:user)
+      @user.confirm!
+      sign_in @user
+    end
+
     it "assigns a new question to @question" do
       get :new
       expect(assigns(:question)).to be_a_new(Question)
@@ -43,20 +67,36 @@ RSpec.describe QuestionsController do
   end
 
   describe 'GET #edit' do
-    it "assigns the requested questiont o @question" do
-      question = create(:question)
+
+    before :each do
+      @request.env["devise.mapping"] = Devise.mappings[:user]
+      @user = FactoryGirl.create(:user)
+      @user.confirm! # or set a confirmed_at inside the factory. Only necessary if you are using the "confirmable" module
+      sign_in @user
+    end
+
+    it "assigns the requested question to @question" do
+      question = create(:question, user_id: @user.id)
       get :edit, id: question
       expect(assigns(:question)).to eq question
     end
 
     it "renders the :edit template" do
-      question = create(:question)
+      question = create(:question, user_id: @user.id)
       get :edit, id: question
       expect(response).to render_template :edit
     end
   end
 
   describe 'POST #create' do
+
+    before :each do
+      @request.env["devise.mapping"] = Devise.mappings[:user]
+      @user = FactoryGirl.create(:user)
+      @user.confirm! # or set a confirmed_at inside the factory. Only necessary if you are using the "confirmable" module
+      sign_in @user
+    end
+
     context "with valid attributes" do
       it "saves the new question to the database" do
         expect{
@@ -86,10 +126,17 @@ RSpec.describe QuestionsController do
 
   describe 'PATCH #update' do
     before :each do
-      @question = create(:question, question: "An updated question?", category: "Other")
+
+      @request.env["devise.mapping"] = Devise.mappings[:user]
+      @user = FactoryGirl.create(:user)
+      @user.confirm! # or set a confirmed_at inside the factory. Only necessary if you are using the "confirmable" module
+      sign_in @user
+
+      @question = create(:question, question: "An updated question?", category: "Other", user_id: @user.id)
     end
 
     context "valid attributes" do
+
       it "finds the requested @question" do
         patch :update, id: @question, question: attributes_for(:question)
         expect(assigns(:question)).to eq(@question)
@@ -124,9 +171,14 @@ RSpec.describe QuestionsController do
     end
   end
 
-  describe 'DELETE #destory' do
+  describe 'DELETE #destroy' do
     before :each do
-      @question = create(:question)
+      @request.env["devise.mapping"] = Devise.mappings[:user]
+      @user = FactoryGirl.create(:user)
+      @user.confirm! # or set a confirmed_at inside the factory. Only necessary if you are using the "confirmable" module
+      sign_in @user
+
+      @question = create(:question, user_id: @user.id)
     end
 
     it "deletes the question" do
