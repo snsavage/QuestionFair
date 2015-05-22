@@ -1,8 +1,8 @@
 require 'simplecov'
 SimpleCov.start
 
+require 'capybara/rspec'
 require 'rubygems'
-
 require 'dotenv'
 Dotenv.load
 
