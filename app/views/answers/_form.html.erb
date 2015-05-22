@@ -8,16 +8,16 @@
 
         <div class="panel-body">
 
-          <%= render partial: "layouts/form_errors", object: @answer %>
+          <%= render partial: "layouts/form_errors", object: @question.new_answer %>
 
-          <%= form_for([@question, @answer]) do |form| %>
+          <%= form_for([@question, @question.new_answer]) do |form| %>
             <div class="form-group">
               <%= form.text_area :answer,  class: "form-control", rows: "3", 
                 placeholder: "Write your answer here." %>
             </div>
 
             <div class="form-group">
-              <%= form.submit "Answer", class: "btn btn-primary" %>
+              <%= form.submit "Answer", class: "b tn btn-primary" %>
             </div>
           <% end %>
 

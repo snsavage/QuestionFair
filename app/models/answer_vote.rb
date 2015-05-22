@@ -17,9 +17,4 @@ class AnswerVote < ActiveRecord::Base
   def ensure_only_one_vote
     errors.add :user_id, "cannot vote on more than one answer." if Question.find(answer.question_id).answer_votes.find_by(user_id: user_id).present?
   end
-
-
-
-
-
 end

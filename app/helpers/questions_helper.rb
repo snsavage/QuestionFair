@@ -4,8 +4,8 @@ module QuestionsHelper
     answers.pluck(:user_id).include?(current_user.id)
   end  
 
-  def voted_on_answer(answer_id)
-    Answer.find(answer_id).answer_votes.pluck(:user_id).include?(current_user.id)
+  def voted_on_answer(answer)
+    answer.answer_votes.pluck(:user_id).include?(current_user.id)
   end
 
   def voted_on_question(question)

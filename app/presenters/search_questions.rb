@@ -1,4 +1,5 @@
 class SearchQuestions
+  QUESTIONS_PER_PAGE = 20
   attr_reader :query, :category, :page
 
   def initialize(attributes = {})
@@ -11,7 +12,14 @@ class SearchQuestions
   end
 
   def questions
-    @questions ||= Question.includes(:user).by_location(location, distance).by_category(category).full_text(query).page(page).order('created_at DESC').per_page(20)
+    @questions ||= Question
+      includes(:user).
+      by_location(location, distance).
+      by_category(category).
+      full_text(query).
+      page(page).
+      order('created_at DESC').
+      per_page(QUESTIONS_PER_PAGE)
   end
 
   def location

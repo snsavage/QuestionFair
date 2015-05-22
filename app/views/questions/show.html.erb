@@ -22,8 +22,7 @@
   <div class="row">
     <div class="col-sm-8">
       <h4><small>Asked by <%= link_to_if(@question.user.friends_with(current_user), @question.user.nickname, user_path(@question.user)) %> on 
-        <%= @question.created_at.strftime("%A, %B %d, %Y") %> at 
-        <%= @question.created_at.strftime("%I:%M %p") %> EST.</small></h4>
+        <%= @question.time_created %></small></h4>
     </div>
     <div class="col-sm-4">
       <h5 class="text-right">
@@ -34,7 +33,7 @@
           <%= link_to @question.create_address, questions_path(location: @question.create_address), 
             class: "label label-success" %>
         </h5>
-      <% end %>
+      <% end %> 
       <% if @question.has_best_answer? %>
         <h5 class="text-right">
           <span class="label label-warning">
@@ -52,7 +51,7 @@
     <div class="fb-like" data-href="<%= request.original_url %>" data-layout="button_count" data-action="like" data-show-faces="false" data-share="true"></div>
   </div>
 
-  <% if @answers.any? { |answer| !answer.answer.nil? } %>
+  <% if @question.any_answers? %>
     <h3>Answers</h3>
   <% else %>
     <h4>No answers have been provided.</h4>
@@ -62,9 +61,9 @@
     <%= render partial: "layouts/form_errors", object: @vote %>
   <% end %>
 
-  <% @answers.each do |answer| %>
+  <% @question.answers.each do |answer| %>
 
-    <% if !answer.answer.nil? %>
+    <% if answer.persisted? %>
 
       <div class="media">
         <div class="media-left">
@@ -97,11 +96,11 @@
           
           <% if !@question.has_best_answer? %>
             <% if user_signed_in? %>
-              <% if voted_on_answer(answer.id) %>
+              <% if voted_on_answer(answer) %>
                 <%= button_to unvote_question_answer_path(@question, answer), method: :post, class: "btn btn-default btn-xs" do %>
                   <span class="glyphicon glyphicon-remove"></span> Remove Vote
                 <% end %>
-              <% elsif ( can? :create, @answer ) && !voted_on_question(@question) && !user_has_answered(@answers) %>
+              <% elsif ( can? :create, @question.new_answer ) && !voted_on_question(@question) && !user_has_answered(@question.answers) %>
                 <%= button_to vote_question_answer_path(@question, answer), method: :post, class: "btn btn-default btn-xs" do %>
                   <span class="glyphicon glyphicon-thumbs-up"></span> Vote 
                 <% end %>
@@ -174,7 +173,7 @@
   <% end %>
 
   <% if !@question.has_best_answer? %>
-    <% if ( can? :create, @answer ) && user_signed_in? && !user_has_answered(@answers) && !voted_on_question(@question) %>
+    <% if can_answer_question?(current_user) %>
 
         <%= render 'answers/form' %>  
 

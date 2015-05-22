@@ -16,7 +16,7 @@ class Question < ActiveRecord::Base
     end
   end
 
-  after_validation :geocode, if: ->(obj){obj.address.present? and obj.address_changed?}
+  after_validation :geocode, if: :can_geocode?
 
   # after_validation :geocode
 
@@ -45,6 +45,18 @@ class Question < ActiveRecord::Base
 
   scope :by_location, -> location, distance { near(location, distance) if location.present? && distance.present? }
 
+  scope :search, -> search { 
+    # where("question ILIKE ? OR category ILIKE ?", "%#{search}%", "%#{search}%")
+    where("question @@ ? OR category @@ ?", search, search)
+  }
+
+  pg_search_scope :search_all, 
+    against: [:question, :category, :city, :state, :country], 
+    associated_against: { answers: :answer },
+    using: { tsearch: { any_word: true } }
+    #using: [:tsearch, :trigram, :dmetaphone]
+
+
   # scope :by_location, -> location, distance {
   #   if location.present? && distance.present?
   #     near(location, distance)
@@ -53,12 +65,20 @@ class Question < ActiveRecord::Base
   #   end
   # }
 
+  def self.newest
+    order(created_at: :desc)
+  end
+
   def create_address
     "#{city}, #{state}, #{country}"
   end
 
+  def can_geocode?
+    address? && address_changed?
+  end
+
   def has_address?
-    !city.nil? && !state.nil? && !country.nil?
+    city? && state? && country?
   end
 
   def self.distances
@@ -78,33 +98,19 @@ class Question < ActiveRecord::Base
   end
 
   def self.category_in_categories?(category)
-    category_list.include?(category) ? true : false
+    category_list.include?(category)
   end
 
   def has_best_answer?
     answers.where(best: true).exists?
   end
 
-  scope :search, -> search { 
-    # where("question ILIKE ? OR category ILIKE ?", "%#{search}%", "%#{search}%")
-    where("question @@ ? OR category @@ ?", search, search)
-  }
-
   # Source: https://github.com/Casecommons/pg_search/issues/49
   def self.full_text(query)
     if query.present?
-      search_all(query)
+      search_all(query).newest
     else
-      # No query? Return all records, newest first.
-      order("created_at DESC")
+      newest
     end
   end
-
-  pg_search_scope :search_all, 
-    against: [:question, :category, :city, :state, :country], 
-    associated_against: { answers: :answer },
-    using: { tsearch: { any_word: true } }
-    #using: [:tsearch, :trigram, :dmetaphone]
-
-
 end

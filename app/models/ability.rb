@@ -5,7 +5,7 @@ class Ability
 
     alias_action :update, :destroy, :to => :modify
 
-    user ||= User.new
+    user ||= Guest.new
 
     # Abilities for Question
     can :search, Question
@@ -19,7 +19,9 @@ class Ability
     can :show, User
     
     # Abilities for Answer
-    can :create, Answer
+    if user.persisted?
+      can :create, Answer
+    end
     cannot :create, Answer, :question => { :user_id => user.id }
     can :modify, Answer, user_id: user.id
     can :vote, Answer
@@ -35,8 +37,5 @@ class Ability
     # Abilities for Answer Votes
     # can :vote, AnswerVote
     # cannot :create, AnswerVote, :question => { :user_id => user.id }
-
-
   end
-
 end

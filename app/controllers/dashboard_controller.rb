@@ -10,7 +10,7 @@ class DashboardController < ApplicationController
     add_breadcrumb "Dashboard", :dashboard_index_path
 
     if user_signed_in?
-      @questions = current_user.questions.all.order(created_at: :desc)
+      @questions = current_user.questions.order(created_at: :desc)
       @answers = current_user.answers.includes(:question).all.order(created_at: :desc)
       @user = current_user
       @friendship = current_user.friendships.build
@@ -20,9 +20,5 @@ class DashboardController < ApplicationController
     else
       render 'questions#index'
     end
-
   end
-
-
-
 end

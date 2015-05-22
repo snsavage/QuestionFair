@@ -68,6 +68,10 @@ class User < ActiveRecord::Base
     end
   end
 
+  def guest?
+    false
+  end
+
 end
 
 

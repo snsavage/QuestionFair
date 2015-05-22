@@ -16,7 +16,11 @@ Rails.application.routes.draw do
 
   resources :questions do
     resources :answers, only: [ :edit, :create, :update, :destroy ] do
-      member { post :vote, :unvote, :best }
+      resource :best, only: [:create]
+      member do
+       post "vote" => "votes#create"
+       delete "unvote" => "votes#destroy"
+      end
     end
     collection do
       get 'geo_search' #, 'search'

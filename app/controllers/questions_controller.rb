@@ -35,9 +35,7 @@ class QuestionsController < ApplicationController
     add_breadcrumb "Browse", :questions_path
     add_breadcrumb "View Question", :question_path
 
-    @question = Question.find(params[:id])
-    @answers = @question.answers.includes(:user, :answer_votes).order(best: :desc).order(created_at: :desc)
-    @answer = @question.answers.build
+    @question = QuestionPresenter.new(Question.find(params[:id]))
   end
 
   def new

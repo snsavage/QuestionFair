@@ -15,15 +15,13 @@ class AnswersController < ApplicationController
   end
 
   def create
-    @question = Question.find(params[:question_id])
-    @answer = @question.answers.build(answer_params)
-    @answer.user_id = current_user.id
-    if @answer.save
-      @answer.create_activity :create, owner: current_user
-      reward_points @answer, :answer
+    @question = QuestionPresenter.new(Question.find(params[:question_id]), answer_params)
+    if @question.save_answer
+      @question.create_answer_activity :create, owner: current_user
+      reward_points @question.new_answer, :answer
       redirect_to question_path(@question), notice: "Thank you for your answer."
     else
-      render 'edit'
+      render 'questions/show'
     end
   end
 
@@ -75,23 +73,9 @@ class AnswersController < ApplicationController
 
   end
 
-  def best
-    @question = Question.find(params[:question_id])
-    @answer = Answer.find(params[:id])
-    @answer.best = true
-    if @answer.save
-      @question.create_activity :best, owner: current_user
-      reward_best_points @question, @answer
-      redirect_to :back, notice: "Thank you for selecting a best answer."
-    else
-      redirect_to :back, notice: "Your selection could not be saved."
-    end
-
-  end
-
   private
     def answer_params
-      params.require(:answer).permit(:answer)
+      params.require(:answer).permit(:answer).merge(user_id: current_user.id)
     end
 
 end

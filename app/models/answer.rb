@@ -18,13 +18,7 @@ class Answer < ActiveRecord::Base
     User.select("id","nickname").find(self.answer_votes.pluck(:user_id))
   end
 
-  def ensure_only_one_answer
-    errors.add :user_id, "cannot answer a question more than once." if Question.find(question_id).answers.find_by(user_id: user_id).present?
-  end
-
   def best_answer?
-    best == true
+    best?
   end
-
-
 end
