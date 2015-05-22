@@ -52,12 +52,11 @@ group :development do
 end
 
 group :test do
-  gem 'minitest-reporters'
   gem 'capybara'
   gem 'rspec-rails', '~> 3.0'
   gem 'shoulda-matchers'
   gem "factory_girl_rails", "~> 4.0"
-  gem "codeclimate-test-reporter", require: nil
+  gem 'simplecov', :require => false
 end
 
 # Use Uglifier as compressor for JavaScript assets

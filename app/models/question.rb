@@ -28,7 +28,7 @@ class Question < ActiveRecord::Base
     'Movies & TV','Music','Other','Outdoors','Parenting','Pets','Sports','Technology',
     'Things to Do','Travel']
 
-  validates :question, :category, presence: true
+  validates :user_id, :question, :category, presence: true
   validates :question, length: { maximum: 500 }
   validates :category, inclusion: { in: CATEGORIES }
 

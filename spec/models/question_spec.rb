@@ -16,14 +16,21 @@ RSpec.describe Question do
     expect(question).to_not be_valid
   end
 
+  # Test for missing validation on question requiring a user.
+  it "is invalid without a user" do
+    question = build(:question, user_id: nil)
+    expect(question).to_not be_valid
+  end
+
   it "has a maximum lenght of 500 chars" do
     question = Question.new(question: 'a' * 501, category: 'Other')
     expect(question).to_not be_valid
   end
 
   it "has a complete category list" do
-    categories = %w(Entertainment Hotels Movies Other Restaurants Shopping 
-                    Sports  Technology Television Vacations)
+    categories = ['Automotive','Books','Business','Cooking','Dining','Health & Fitness',
+    'Movies & TV','Music','Other','Outdoors','Parenting','Pets','Sports','Technology',
+    'Things to Do','Travel']
     expect(Question::CATEGORIES).to match_array(categories)
   end
 
@@ -35,8 +42,5 @@ RSpec.describe Question do
   it "has_many answers" do
     is_expected.to have_many(:answers)
   end
-
-  it "begins with Who, What, Where, Why, When, or How"
-
 
 end

@@ -2,11 +2,19 @@ FactoryGirl.define do
 
   factory :user do
     nickname "test_user"
-    email "example@example.com"
+    email "example@questionfair.com"
     password "long_secret"
     password_confirmation "long_secret"
+    terms true
   end
 
+  factory :answerer, class: :user do
+    nickname "answering_user"
+    email "answeringuser@questionfair.com"
+    password "long_secret"
+    password_confirmation "long_secret"
+    terms true
+  end
 
   factory :question do
     question "A question?"
