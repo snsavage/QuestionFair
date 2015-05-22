@@ -12,10 +12,10 @@
       <%= form_tag questions_path, :method => 'get', class: "form-group", role: "search" do %>
         <div class="form-group">
           <%= label_tag "Search", nil, class: "control-label" %>
-          <%= text_field_tag :search, params[:search], class: "form-control", placeholder: "Search" %>
-          <%= hidden_field_tag(:category, params[:category]) %>
-          <%= hidden_field_tag(:location, params[:location]) %>
-          <%= hidden_field_tag(:distance, params[:distance]) %>
+          <%= text_field_tag :query, @search_questions.query, class: "form-control", placeholder: "Search" %>
+          <%= hidden_field_tag(:category, @search_questions.category) %>
+          <%= hidden_field_tag(:location, @search_questions.location) %>
+          <%= hidden_field_tag(:distance, @search_questions.distance) %>
         </div>
         <%= submit_tag "Search", name: nil, class: "btn btn-default" %>
       <% end %>
@@ -23,10 +23,10 @@
     <div class="panel-footer">
       <%= link_to "Remove Search Filter", {controller: "questions", 
                                         action: "index", 
-                                        category: params[:category],
-                                        location: params[:location],
-                                        distance: params[:distance],
-                                        search: "" } %>
+                                        category: @search_questions.category,
+                                        location: @search_questions.location,
+                                        distance: @search_questions.distance,
+                                        query: "" } %>
     </div>
   </div>
 
@@ -34,12 +34,13 @@
     <div class="panel-heading">
       <h4 class="panel-title">Search Nearby</h4>
     </div>
+  
     <div class="panel-body">
-      <%= form_tag questions_path, :method => 'get', class: "form-group", role: "search" do %>
+      <%= form_for questions_path, :method => 'get', class: "form-group", role: "search" do %>
         <div class="form-group">
           <%= label_tag "Search Nearby", nil, class: "control-label" %>
           <%= text_field_tag :location, 
-            params[:location], 
+            @search_questions.location, 
             id: "location_city_state",
             data: {autocomplete_source: geo_search_questions_path },
             class: "form-control", 
@@ -47,20 +48,20 @@
         </div>
         <div class="form-group">
           <%= label_tag "Distance", nil, class: "control-label" %>
-          <%= select_tag :distance, options_for_select(Question.distances, @distance.to_i), class: "form-control" %>
+          <%= select_tag :distance, options_for_select(Question.distances, @search_questions.distance), class: "form-control" %>
         </div>
-        <%= hidden_field_tag(:category, params[:category]) %>
-        <%= hidden_field_tag(:search, params[:search]) %>
+        <%= hidden_field_tag(:category, @search_questions.category) %>
+        <%= hidden_field_tag(:query, @search_questions.query) %>
         <%= submit_tag "Nearby Search", name: nil, class: "btn btn-default" %>
       <% end %>
     </div>
     <div class="panel-footer">
       <%= link_to "Remove Search Nearby Filter", {controller: "questions", 
                                         action: "index", 
-                                        category: params[:category],
+                                        category: @search_questions.category,
                                         location: "",
                                         distance: "",
-                                        search: params[:search] } %>
+                                        query: @search_questions.query } %>
     </div>
   </div>
 
@@ -70,20 +71,20 @@
     </div>
     <div class="list-group" >
       <% Question.category_list_with_all.sort.each do |category| %>
-        <% if category == @category %>
+        <% if category == @search_questions.category %>
             <%= link_to category.titleize, {controller: "questions", 
                                             action: "index", 
                                             category: category, 
-                                            location: params[:location],
-                                            distance: params[:distance],
-                                            search: params[:search] }, class: "list-group-item active" %>
+                                            location: @search_questions.location,
+                                            distance: @search_questions.distance,
+                                            query: @search_questions.query }, class: "list-group-item active" %>
         <% else %>
             <%= link_to category.titleize, {controller: "questions", 
                                             action: "index", 
                                             category: category,
-                                            location: params[:location],
-                                            distance: params[:distance],
-                                            search: params[:search] }, class: "list-group-item" %>
+                                            location: @search_questions.location,
+                                            distance: @search_questions.distance,
+                                            query: @search_questions.query }, class: "list-group-item" %>
         <% end %>
       <% end %>
     </div>
@@ -91,9 +92,9 @@
       <%= link_to "Remove Search Filter", {controller: "questions", 
                                         action: "index", 
                                         category: "All",
-                                        location: params[:location],
-                                        distance: params[:distance],
-                                        search: params[:search] } %>
+                                        location: @search_questions.location,
+                                        distance: @search_questions.distance,
+                                        query: @search_questions.query } %>
     </div>
   </div>
   <div class="panel panel-default">
@@ -107,19 +108,19 @@
 
   <h3>Search &amp; Browse Questions</h3>
 
-  <% if !@questions.exists? %>
+  <% if !@search_questions.questions.exists? %>
 
     <h3><small>No questions have been found.</small></h3>
 
   <% elsif %>
 
-    <h3><small><%= @questions.size %> <%= "questions".pluralize(@questions.size) %> have been found.</small></h3> 
+    <h3><small><%= @search_questions.questions.size %> <%= "questions".pluralize(@search_questions.questions.size) %> have been found.</small></h3> 
 
     <div class="text-center">
-      <%= will_paginate @questions, class: "pagination-sm", renderer: BootstrapPagination::Rails %>
+      <%= will_paginate @search_questions.questions, class: "pagination-sm", renderer: BootstrapPagination::Rails %>
     </div>
 
-    <% @questions.each do |question| %>
+    <% @search_questions.questions.each do |question| %>
 
       <div class="col-md-12">
         <div class="row">
@@ -155,7 +156,7 @@
     <% end %>
 
     <div class="text-center">
-      <%= will_paginate @questions, class: "pagination-sm", renderer: BootstrapPagination::Rails %>
+      <%= will_paginate @search_questions.questions, class: "pagination-sm", renderer: BootstrapPagination::Rails %>
     </div>
 
   <% end %> 

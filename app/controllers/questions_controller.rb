@@ -2,7 +2,8 @@ class QuestionsController < ApplicationController
 
   before_filter :authenticate_user!, except: [:index, :show, :search, :geo_search]
 
-  load_and_authorize_resource :question
+  load_and_authorize_resource :question, except: [:index]
+  skip_authorization_check only: [:index, :show, :geo_search]
 
   add_breadcrumb "Home", :root_path
 
@@ -25,32 +26,9 @@ class QuestionsController < ApplicationController
   end
 
   def index
-
     add_breadcrumb "Browse", :questions_path
 
-    if params[:location].present?
-      @location = Question.get_stored_location(params[:location])
-      @location = @location.nil? ? params[:location] : [@location.latitude, @location.longitude]
-    else
-      @location = params[:location]
-    end
-
-    if !params[:distance].present?
-      @distance = 10
-    elsif Question.distances.map { |distance| distance[0] == params[:distance].to_i }
-      @distance = params[:distance].to_i
-    else
-      @distance = 10
-    end
-
-    if Question.category_in_categories?(params[:category])
-      @category = params[:category]
-      @questions = Question.includes(:user).by_location(@location, @distance).by_category(@category).full_text(params[:search]).page(params[:page]).order('created_at DESC').per_page(20)
-    else
-      @category = "All"
-      @questions = Question.includes(:user).by_location(@location, @distance).by_category(@category).full_text(params[:search]).page(params[:page]).order('created_at DESC').per_page(20)
-    end
-
+    @search_questions = SearchQuestions.new(search_params || {})
   end
 
   def show
@@ -109,4 +87,7 @@ class QuestionsController < ApplicationController
       params.require(:question).permit(:question, :category, :address)
     end
 
+    def search_params
+      params.permit(:location, :category, :distance, :page, :query)
+    end
 end

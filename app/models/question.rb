@@ -66,7 +66,7 @@ class Question < ActiveRecord::Base
   end 
 
   def self.get_stored_location(location)
-    location = Question.select(:latitude, :longitude).where(city_state: location).first
+    Question.select(:latitude, :longitude).find_by(city_state: location)
   end
 
   def self.category_list
