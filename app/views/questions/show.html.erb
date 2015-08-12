@@ -12,21 +12,21 @@
 
 <div class="col-md-offset-1 col-sm-8">
   <div class="row">
-    <div class="col-sm-8">
+    <div class="col-sm-8 question-question">
       <h4><%= @question.question %></h4>
     </div>
-    <div class="col-sm-4">
+    <div class="col-sm-4 question-count">
       <h5 class="text-right">Answers <span class="badge"><%= @question.answers.count %></spam></h5>
     </div>
   </div>
   <div class="row">
-    <div class="col-sm-8">
+    <div class="col-sm-8 question-nickname">
       <h4><small>Asked by <%= link_to_if(@question.user.friends_with(current_user), @question.user.nickname, user_path(@question.user)) %> on 
         <%= @question.created_at.strftime("%A, %B %d, %Y") %> at 
         <%= @question.created_at.strftime("%I:%M %p") %> EST.</small></h4>
     </div>
     <div class="col-sm-4">
-      <h5 class="text-right">
+      <h5 class="text-right question-category">
         <%= link_to @question.category, questions_path(category: @question.category), class: "label label-info" %>
       </h5>
       <% if @question.has_address? %>
@@ -55,7 +55,7 @@
   <% if @answers.any? { |answer| !answer.answer.nil? } %>
     <h3>Answers</h3>
   <% else %>
-    <h4>No answers have been provided.</h4>
+    <h4 class="question-no-answers">No answers have been provided.</h4>
   <% end %>
 
   <% if !@vote.nil? %>
@@ -155,10 +155,10 @@
     <% if can? :modify, @question %>
       <div class="row">    
         <div class="panel panel-default">
-          <div class="panel-heading">
+          <div class="panel-heading question-controls">
             <h3 class="panel-title">Question Controls</h3>
           </div>
-          <div class="panel-body">
+          <div class="panel-body question-edit-delete">
             <p>
               <%= current_user.nickname.capitalize %>, would you like to edit or remove this question?
             </p>
