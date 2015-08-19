@@ -6,6 +6,7 @@ FactoryGirl.define do
     password "long_secret"
     password_confirmation "long_secret"
     terms true
+    confirmed_at Time.now
   end
 
   factory :answerer, class: :user do
