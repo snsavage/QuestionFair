@@ -4,15 +4,21 @@ class Question < ActiveRecord::Base
   include PublicActivity::Common
 
   geocoded_by :address do |obj, results|
-    if geo = results.first
-      obj.city = geo.city
-      obj.state = geo.state_code
-      obj.country = geo.country_code
-      obj.latitude = geo.latitude
-      obj.longitude = geo.longitude
-      if obj.city.present? && obj.state.present? && obj.country.present?
-        obj.city_state = "#{geo.city}, #{geo.state_code}, #{geo.country_code}"
+    begin
+      if geo = results.first
+        obj.city = geo.city
+        obj.state = geo.state_code
+        obj.country = geo.country_code
+        obj.latitude = geo.latitude
+        obj.longitude = geo.longitude
+        if obj.city.present? && obj.state.present? && obj.country.present?
+          obj.city_state = "#{geo.city}, #{geo.state_code}, #{geo.country_code}"
+        end
       end
+    rescue => e
+      Rails.logger.warn {
+        "Geocoder Error: #{e.message} #{e.backtrace.join("\n")}"
+      }
     end
   end
 
