@@ -29,7 +29,7 @@ gem 'jquery-rails'
 gem 'jquery-ui-rails'
 gem 'jquery-turbolinks'
 
-gem 'geocoder'
+gem 'geocoder', '~> 1.0'
 gem 'breadcrumbs_on_rails'
 
 gem 'gibbon'
