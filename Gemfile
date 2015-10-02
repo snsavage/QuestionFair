@@ -25,7 +25,7 @@ gem 'will_paginate-bootstrap'
 gem 'sass-rails', '~> 4.0.3'
 gem 'bootstrap-sass', '~> 3.3.3'
 
-gem 'jquery-rails'
+gem 'jquery-rails', '~> 2.3.0'
 gem 'jquery-ui-rails'
 gem 'jquery-turbolinks'
 
