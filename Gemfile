@@ -29,10 +29,10 @@ gem 'jquery-rails'
 gem 'jquery-ui-rails'
 gem 'jquery-turbolinks'
 
-gem 'geocoder', '~> 1.0'
+gem 'geocoder'
 gem 'breadcrumbs_on_rails'
 
-gem 'gibbon'
+gem 'gibbon', '~> 1.0'
 gem 'public_activity'
 
 gem 'google-analytics-rails'
