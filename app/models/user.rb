@@ -46,25 +46,31 @@ class User < ActiveRecord::Base
 
   # Source: http://mrgeorgegray.com/workflow/getting-a-grip-on-gibbon/
   def mailchimp_status
-    @mailchimp_list_id = ENV['MAILCHIMP_LIST_ID']
-    @gb = Gibbon::API.new
+    begin
+      @mailchimp_list_id = ENV['MAILCHIMP_LIST_ID']
+      @gb = Gibbon::API.new
 
-    if self.mail_chimp == true
-      @gb.lists.subscribe({
-      :id => @mailchimp_list_id,
-      :email => {:email => self.email},
-      :merge_vars => {:NICKNAME => self.nickname},
-      :double_optin => false,
-      :send_welcome => true
-    })
-    elsif self.mail_chimp == false
-      @gb.lists.unsubscribe({
-      :id => @mailchimp_list_id,
-      :email => {:email => self.email},
-      :delete_member => true,
-      :send_goodbye => true,
-      :send_notify => false
-    })
+      if self.mail_chimp == true
+        @gb.lists.subscribe({
+        :id => @mailchimp_list_id,
+        :email => {:email => self.email},
+        :merge_vars => {:NICKNAME => self.nickname},
+        :double_optin => false,
+        :send_welcome => true
+      })
+      elsif self.mail_chimp == false
+        @gb.lists.unsubscribe({
+        :id => @mailchimp_list_id,
+        :email => {:email => self.email},
+        :delete_member => true,
+        :send_goodbye => true,
+        :send_notify => false
+      })
+      end
+    rescue => e
+      Rails.logger.warn {
+        "MailChimp Error: #{e.message} #{e.backtrace.join("\n")}"
+      }
     end
   end
 

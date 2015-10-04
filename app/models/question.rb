@@ -3,8 +3,8 @@ class Question < ActiveRecord::Base
   include PgSearch
   include PublicActivity::Common
 
-  geocoded_by :address do |obj, results|
-    begin
+  begin
+    geocoded_by :address do |obj, results|
       if geo = results.first
         obj.city = geo.city
         obj.state = geo.state_code
@@ -15,11 +15,11 @@ class Question < ActiveRecord::Base
           obj.city_state = "#{geo.city}, #{geo.state_code}, #{geo.country_code}"
         end
       end
-    rescue => e
-      Rails.logger.warn {
-        "Geocoder Error: #{e.message} #{e.backtrace.join("\n")}"
-      }
     end
+  rescue => e
+    Rails.logger.warn {
+      "Geocoder Error: #{e.message} #{e.backtrace.join("\n")}"
+    }
   end
 
   after_validation :geocode, if: ->(obj){obj.address.present? and obj.address_changed?}
