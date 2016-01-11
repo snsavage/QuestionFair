@@ -5,11 +5,7 @@ RSpec.describe Answer do
   before :each do
     @user = FactoryGirl.create(:user)
     @user.confirm!
-    sign_in @user
-
-    @answerer = FactoryGirl.create(:answerer)
-    @answerer.confirm!
-    sign_in @answerer
+    login_as @user
   end
 
   it "is valid with a valid question" do
@@ -27,19 +23,16 @@ RSpec.describe Answer do
   end
 
   it "has an answer" do
-    answer = build(:answer, answer: nil)
-    expect(answer).to_not be_valid
+    is_expected.to validate_presence_of(:answer)
   end
 
   it "has maximum lenghth of 500 chars" do
-    answer = build(:answer, answer: 'q'*501)
-    expect(answer).to_not be_valid
+    is_expected.to validate_length_of(:answer).is_at_most(500)
   end
 
-  # Test for missing validation on question requiring a user.
   it "is invalid without a user" do
     answer = build(:answer, user_id: nil)
-    expect(answer).to_not be_valid
+    expect(answer).to be_invalid 
   end
 
 end

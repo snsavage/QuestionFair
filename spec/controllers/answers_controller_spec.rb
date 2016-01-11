@@ -15,7 +15,7 @@ RSpec.describe AnswersController do
         @user.confirm! # or set a confirmed_at inside the factory. Only necessary if you are using the "confirmable" module
         sign_in @user
 
-        @answerer = FactoryGirl.create(:answerer)
+        @answerer = FactoryGirl.create(:user)
         @answerer.confirm! # or set a confirmed_at inside the factory. Only necessary if you are using the "confirmable" module
         sign_in @answerer
 
@@ -41,7 +41,7 @@ RSpec.describe AnswersController do
         @user.confirm!
         sign_in @user
 
-        @answerer = FactoryGirl.create(:answerer)
+        @answerer = FactoryGirl.create(:user)
         @answerer.confirm!
         sign_in @answerer
 

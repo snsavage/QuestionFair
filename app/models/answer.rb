@@ -8,6 +8,7 @@ class Answer < ActiveRecord::Base
   has_many :answer_votes
 
   validates :question, presence: true
+  validates :user, presence: true
   validates :answer, presence: true
   validates :answer, length: { maximum: 500 } 
   validates :answer, uniqueness: {scope: :question_id, 
