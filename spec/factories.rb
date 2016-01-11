@@ -9,15 +9,8 @@ FactoryGirl.define do
     confirmed_at Time.now
   end
 
-  factory :answerer, class: :user do
-    nickname "answering_user"
-    email "answeringuser@questionfair.com"
-    password "long_secret"
-    password_confirmation "long_secret"
-    terms true
-  end
-
   factory :question do
+    association :user
     question "A question?"
     category "Other"
 
@@ -30,6 +23,7 @@ FactoryGirl.define do
 
   factory :answer do
     association :question
+    association :user
     answer "An answer!"
 
     factory :invalid_answer do
